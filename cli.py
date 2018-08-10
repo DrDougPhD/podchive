@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
+import importlib
 import os
 from datetime import datetime
 import logging
 from io import TextIOWrapper
+from pathlib import Path
 import colorlog
 import sys
 
@@ -13,15 +15,28 @@ def prepare(app, args):
     return CommandLineInterface(app=app, args=args)
 
 
-def add_subcommands(subcmd_modules, parser):
+def add_subcommands(root, parser):
     subparsers = parser.add_subparsers(dest='subcommand')
-    for module in subcmd_modules:
+    for module in load_subcommands(root=root):
         subcommand = subparsers.add_parser(
             name=module.__name__.split('.')[-1],
             help=module.__doc__ or '',
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
         module.cli(subcommand)
+
+
+def load_subcommands(root):
+    subcommand_directory = Path('.') / root / 'commands'
+    for subcommand_module_file in subcommand_directory.glob('*.py'):
+        subcommand_module_filename = subcommand_module_file.name
+        if subcommand_module_filename.startswith('__'):
+            continue
+
+        subcommand_module_name = subcommand_module_filename.replace('.py', '')
+
+        subcommand_package = f'{root}.commands.{subcommand_module_name}'
+        yield importlib.import_module(name=subcommand_package)
 
 
 class CommandLineInterface(object):

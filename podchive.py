@@ -40,14 +40,8 @@ import logging
 
 import cli
 
-logger = logging.getLogger('podchive')
+logger = logging.getLogger(__appname__)
 
-
-# Uncomment the import below and add the module corresponding to a subcommand
-from podchive.commands import subcommand
-enabled_subcommands = [
-    subcommand
-]
 
 def main(args):
     '''ADD DESCRIPTION HERE'''
@@ -62,8 +56,7 @@ def cli_arguments():
     parser.add_argument('-v', '--verbose', action='store_true',
                         default=__indevelopment__, help='verbose output')
 
-    cli.add_subcommands(subcmd_modules=enabled_subcommands,
-                        parser=parser)
+    cli.add_subcommands(root=__appname__, parser=parser)
 
     args = parser.parse_args()
     return args
