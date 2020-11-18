@@ -2,10 +2,10 @@
 
 #### Download every podcast from a particular website.
 
-~~~~
+```
 $ podchive http://www.theskepticsguide.org/
 ... (informative text output) ...
-~~~
+```
 
 **Note**: only websites that have been added to this project can be downloaded.
 Calling this on a website not yet added to this project will result in only a reminder message.
@@ -32,4 +32,4 @@ Don't waste a their bandwidth, as they might shut off their downloading option e
 #### Why Go?
 
 I wanted to learn Go.
-I might abandon Go if it becomes too much of a pain in the ass to develop in, at which point I would port the project to Python.
+I might abandon Go if it becomes too much of a pain to develop, at which point I would port the project to Python.
