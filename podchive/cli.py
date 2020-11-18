@@ -27,7 +27,7 @@ def add_subcommands(root, parser):
 
 
 def load_subcommands(root):
-    subcommand_directory = Path('.') / root / 'commands'
+    subcommand_directory = Path(root) / 'commands'
     for subcommand_module_file in subcommand_directory.glob('*.py'):
         subcommand_module_filename = subcommand_module_file.name
         if subcommand_module_filename.startswith('__'):

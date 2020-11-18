@@ -38,7 +38,7 @@ __indevelopment__ = True        # change this to false when releases are ready
 import argparse
 import logging
 
-import cli
+from podchive import cli
 
 logger = logging.getLogger(__appname__)
 
@@ -51,7 +51,7 @@ def main(args):
 def cli_arguments():
     parser = argparse.ArgumentParser(
         description=main.__doc__,
-        formatter_class = argparse.ArgumentDefaultsHelpFormatter
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument('-v', '--verbose', action='store_true',
                         default=__indevelopment__, help='verbose output')

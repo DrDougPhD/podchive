@@ -7,7 +7,7 @@ import logging
 import argparse
 import sys
 
-import config
+from podchive import config
 
 logger = logging.getLogger(__name__)
 
