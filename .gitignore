@@ -1,3 +1,8 @@
+# Directory containing non-audio file downloaded files, such as RSS feed files.
+# Used to determine if new files should be downloaded without re-downloading
+# old files.
+.cache/
+
 /blib/
 /.build/
 _build/
