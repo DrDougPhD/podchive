@@ -4,10 +4,10 @@
 http://maximumfun.org/shows/my-brother-my-brother-and-me"""
 
 import logging
-import argparse
-import sys
 
-from podchive import config
+from .. import config
+from ..rss import PodcastRSSFeed
+from ..utilities import AutoCreatedDirectoryPath
 
 logger = logging.getLogger(__name__)
 
@@ -17,15 +17,35 @@ def cli(subcommand):
     '''
     subcommand.add_argument(
         '-o', '--output-directory',
-        type=argparse.FileType('r'),
+        type=AutoCreatedDirectoryPath,
         default=config.defaults.output_directory,
-        help='input file',
+        help=f'directory to download into '
+             f'(default: {config.defaults.output_directory})',
     )
     subcommand.set_defaults(func=main)
 
 
+class MBMBaMDownloader(PodcastRSSFeed):
+    podcast_title = 'My Brother, My Brother And Me'
+    rss_feed_url = 'https://feeds.simplecast.com/wjQvYtdl'
+
+    def __str__(self):
+        return f'{self.__class__.__name__}'
+
+    def download(self):
+        """Download all podcasts episodes."""
+        # import json
+        # with open(f'{self.__class__.__name__}.json', 'w') as f:
+        #     json.dump(self.feed, f, indent=4)
+        feed = self.feed
+
+        for entry in self:
+            entry.download_to()
+
+        return None
+
+
 def main(args):
     # read from file system to learn about albums that have been ripped
-    raise NotImplementedError('{0} {1} subcommand is not implemented!'.format(
-        *sys.argv
-    ))
+    downloader = MBMBaMDownloader()
+    downloader.download()
