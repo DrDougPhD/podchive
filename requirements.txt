@@ -3,3 +3,5 @@ humanfriendly==8.2
 termcolor==1.1.0
 feedparser==6.0.2
 pathvalidate==2.3.0
+progressbar2==3.55.0
+requests==2.26.0

@@ -10,6 +10,9 @@ from pathlib import Path
 import colorlog
 import sys
 
+import progressbar
+progressbar.streams.wrap_stderr()
+
 
 def prepare(app, args):
     return CommandLineInterface(app=app, args=args)
