@@ -1,6 +1,9 @@
 import datetime
 import logging
+import os
 import pathlib
+import shutil
+import tempfile
 import urllib.parse
 
 import feedparser
@@ -41,36 +44,45 @@ class PodcastRSSEntry(object):
             import sys
             sys.exit(1)
 
-        self.audio_url = urllib.parse.urlparse(audio_links[-1])
+        self.audio_url = audio_links[-1]
+        # file_details_response = requests.head(self.audio_url, allow_redirects=True)
+        # self.file_size = int(file_details_response.headers.get('content-length', -1))
+
         logger.debug(f'Chosen URL: {self.audio_url}')
 
     @property
     def filename(self):
-        download_extension = pathlib.Path(self.audio_url.path).suffix
+        parsed_url = urllib.parse.urlparse(self.audio_url)
+        download_extension = pathlib.Path(parsed_url.path).suffix
         filename = f'{self.published_date} - {pathvalidate.sanitize_filename(self.title)}{download_extension}'
         return filename
 
     def download(self, to):
-        url = urllib.parse.urlunparse(self.audio_url)
         path = AutoCreatedDirectoryPath(to.directory/self.podcast.title)/self.filename
 
-        logger.info(f'Downloading {url} to {path}')
+        logger.info(f'Downloading {self.audio_url} to {path}')
 
-        with requests.get(url, stream=True) as response:
-            response.raise_for_status()
-            with path.open('wb') as file:
+        partial_download_file = tempfile.NamedTemporaryFile(dir=path.parent, delete=False)
+        try:
+            with requests.get(self.audio_url, stream=True) as response:
+                response.raise_for_status()
                 for chunk in response.iter_content(chunk_size=8192):
-                    file.write(chunk)
+                    partial_download_file.write(chunk)
 
-            # size = response.headers.get('Content-Length')
-            # progress_max_val = int(size) if size is not None else progressbar.UnknownLength
-            # count = 0
-            # with progressbar.ProgressBar(max_value=progress_max_val) as progress, path.open('wb') as file:
-            #     for chunk in response.iter_content(chunk_size=8192):
-            #         count += len(chunk)
-            #         progress.update(count)
-            #
-            #         file.write(chunk)
+                # size = response.headers.get('Content-Length')
+                # progress_max_val = int(size) if size is not None else progressbar.UnknownLength
+                # count = 0
+                # with progressbar.ProgressBar(max_value=progress_max_val) as progress, path.open('wb') as file:
+                #     for chunk in response.iter_content(chunk_size=8192):
+                #         count += len(chunk)
+                #         progress.update(count)
+                #
+                #         file.write(chunk)
+            partial_download_file.close()
+            shutil.copy(partial_download_file.name, path)
+        finally:
+            logger.debug(f'Removing temp file at {partial_download_file.name}')
+            os.remove(partial_download_file.name)
         return path
 
 

@@ -17,4 +17,7 @@ class LocalPodcastArchive(object):
         if not podcast_file.exists():
             return False
 
+        # if episode.file_size > 0 and podcast_file.stat().st_size != episode.file_size:
+        #     return False
+
         return True

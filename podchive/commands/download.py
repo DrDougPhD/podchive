@@ -3,7 +3,6 @@
 """Download episodes of a podcast given its RSS feed URL"""
 
 import logging
-import time
 import urllib.parse
 
 import progressbar
@@ -17,8 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def cli(subcommand):
-    '''Add command-line arguments to this subcommand
-    '''
+    '''Download podcast episodes from an RSS feed.'''
     subcommand.add_argument(
         '-u', '--rss-url',
         type=urllib.parse.urlparse,
@@ -53,4 +51,3 @@ def main(args):
         for i, episode in enumerate(episodes_to_download):
             progress.update(i)
             episode.download(to=local_archive)
-            time.sleep(3)
